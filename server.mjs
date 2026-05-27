@@ -9,7 +9,7 @@ await loadDotEnv();
 const root = process.cwd();
 const dataDir = process.env.DATA_DIR ? resolve(process.env.DATA_DIR) : join(root, "data");
 const dbFile = join(dataDir, "app.db.json");
-const host = process.env.HOST || "127.0.0.1";
+const host = process.env.HOST || (process.env.RENDER === "true" ? "0.0.0.0" : "127.0.0.1");
 const port = Number(process.env.PORT || 4173);
 const appSecret = process.env.APP_SECRET || "dev-only-change-me";
 const isProduction = process.env.NODE_ENV === "production";
