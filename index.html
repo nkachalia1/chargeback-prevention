@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Chargeback Killer</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="auth-overlay" id="authOverlay" hidden>
+      <form class="auth-card" id="loginForm">
+        <div class="brand-block">
+          <div class="brand-mark" aria-hidden="true">CK</div>
+          <div>
+            <p class="eyebrow">Secure merchant workspace</p>
+            <h1>Chargeback Killer</h1>
+          </div>
+        </div>
+        <label>
+          Admin email
+          <input id="loginEmail" type="email" autocomplete="username" required />
+        </label>
+        <label>
+          Password
+          <input id="loginPassword" type="password" autocomplete="current-password" required />
+        </label>
+        <button class="button primary" type="submit">Sign In</button>
+        <p class="form-error" id="loginError" role="alert"></p>
+      </form>
+    </div>
+
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="Chargeback workspace">
+        <div class="brand-block">
+          <div class="brand-mark" aria-hidden="true">CK</div>
+          <div>
+            <p class="eyebrow">Merchant dispute ops</p>
+            <h1>Chargeback Killer</h1>
+          </div>
+        </div>
+
+        <section class="panel profile-panel" aria-labelledby="profile-title">
+          <div class="panel-heading">
+            <h2 id="profile-title">Store Profile</h2>
+            <span class="saved-state" id="saveState">Saved</span>
+          </div>
+          <label>
+            Store name
+            <input id="storeName" type="text" autocomplete="organization" />
+          </label>
+          <label>
+            Support email
+            <input id="supportEmail" type="email" autocomplete="email" />
+          </label>
+          <label>
+            Refund policy URL
+            <input id="policyUrl" type="url" autocomplete="url" />
+          </label>
+          <label>
+            Default fulfillment note
+            <textarea id="fulfillmentNote" rows="4"></textarea>
+          </label>
+        </section>
+
+        <section class="panel" aria-labelledby="kpi-title">
+          <div class="panel-heading">
+            <h2 id="kpi-title">Today</h2>
+          </div>
+          <div class="metric-grid">
+            <div class="metric">
+              <span id="openCount">0</span>
+              <p>open disputes</p>
+            </div>
+            <div class="metric">
+              <span id="dueSoonCount">0</span>
+              <p>due soon</p>
+            </div>
+            <div class="metric wide">
+              <span id="riskAmount">$0</span>
+              <p>revenue at risk</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel" aria-labelledby="integration-title">
+          <div class="panel-heading">
+            <h2 id="integration-title">Integrations</h2>
+          </div>
+          <div class="integration-list" id="integrationList"></div>
+          <div class="integration-actions">
+            <button class="button secondary" id="syncStripe" type="button">Sync Stripe</button>
+            <button class="button secondary" id="syncShopify" type="button">Sync Shopify</button>
+          </div>
+        </section>
+      </aside>
+
+      <main class="workspace">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Stripe / Shopify evidence builder</p>
+            <h2>Dispute Command Center</h2>
+          </div>
+          <div class="topbar-actions">
+            <button class="button ghost" id="resetDemo" type="button">Reset Demo</button>
+            <button class="button secondary" id="copyPacket" type="button">Copy Packet</button>
+            <button class="button primary" id="printPacket" type="button">Print / PDF</button>
+            <button class="button ghost" id="logoutButton" type="button">Log Out</button>
+          </div>
+        </header>
+
+        <section class="queue-strip" aria-label="Dispute queue">
+          <div class="queue-header">
+            <div>
+              <h3>Active Disputes</h3>
+              <p>Pick a case, confirm evidence, then generate a processor-ready response.</p>
+            </div>
+            <select id="reasonFilter" aria-label="Filter by dispute reason">
+              <option value="all">All reasons</option>
+              <option value="Product not received">Product not received</option>
+              <option value="Fraudulent">Fraudulent</option>
+              <option value="Not as described">Not as described</option>
+            </select>
+          </div>
+          <div class="dispute-list" id="disputeList"></div>
+        </section>
+
+        <div class="work-grid">
+          <section class="panel detail-panel" aria-labelledby="case-title">
+            <div class="panel-heading case-heading">
+              <div>
+                <p class="eyebrow" id="processorLabel">Processor</p>
+                <h2 id="case-title">Select a dispute</h2>
+              </div>
+              <span class="status-pill" id="statusPill">Draft</span>
+            </div>
+
+            <div class="case-summary">
+              <div>
+                <span>Amount</span>
+                <strong id="caseAmount">$0</strong>
+              </div>
+              <div>
+                <span>Due date</span>
+                <strong id="caseDueDate">-</strong>
+              </div>
+              <div>
+                <span>Reason</span>
+                <strong id="caseReason">-</strong>
+              </div>
+            </div>
+
+            <div class="section-heading">
+              <h3>Order Facts</h3>
+              <button class="text-button" id="generateResponse" type="button">Generate Response</button>
+            </div>
+            <dl class="facts-list" id="factsList"></dl>
+
+            <div class="section-heading">
+              <h3>Timeline</h3>
+            </div>
+            <ol class="timeline" id="timeline"></ol>
+
+            <div class="section-heading">
+              <h3>Merchant Notes</h3>
+            </div>
+            <textarea id="merchantNotes" class="notes-box" rows="5" placeholder="Add anything a reviewer should know before the packet is finalized."></textarea>
+          </section>
+
+          <section class="panel evidence-panel" aria-labelledby="evidence-title">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">Evidence checklist</p>
+                <h2 id="evidence-title">Response Inputs</h2>
+              </div>
+              <span class="score-badge" id="evidenceScore">0%</span>
+            </div>
+
+            <div class="evidence-list" id="evidenceList"></div>
+
+            <div class="section-heading">
+              <h3>Add Evidence</h3>
+            </div>
+            <form class="add-evidence" id="evidenceForm">
+              <label>
+                Evidence type
+                <input id="newEvidenceType" type="text" placeholder="Example: Signature confirmation" required />
+              </label>
+              <label>
+                Details
+                <input id="newEvidenceDetail" type="text" placeholder="Example: Signed by J. Carter at 2:14 PM" required />
+              </label>
+              <button class="button secondary" type="submit">Add to Packet</button>
+            </form>
+          </section>
+
+          <section class="panel packet-panel" aria-labelledby="packet-title">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">Generated draft</p>
+                <h2 id="packet-title">Evidence Packet</h2>
+              </div>
+              <button class="button primary compact" id="markReady" type="button">Mark Ready</button>
+            </div>
+
+            <article class="packet-preview" id="packetPreview" aria-live="polite">
+              <div class="empty-state">
+                <h3>No packet generated yet</h3>
+                <p>Confirm the evidence for the selected dispute, then generate the response letter.</p>
+              </div>
+            </article>
+          </section>
+        </div>
+      </main>
+    </div>
+
+    <template id="printTemplate">
+      <section class="print-packet"></section>
+    </template>
+
+    <script src="app.js"></script>
+  </body>
+</html>
