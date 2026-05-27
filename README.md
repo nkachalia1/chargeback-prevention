@@ -1,4 +1,4 @@
-# Chargeback Killer MVP
+# Chargeback Manager MVP
 
 A small full-stack MVP for preparing chargeback evidence packets for ecommerce stores.
 
