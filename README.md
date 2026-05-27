@@ -4,35 +4,6 @@ Live link: https://chargeback-prevention.onrender.com/
 
 A small full-stack MVP for preparing chargeback evidence packets for ecommerce stores.
 
-## Run Locally
-
-```bash
-npm start
-```
-
-Then open `http://127.0.0.1:4173`.
-
-Local dev credentials, unless you set your own `.env`:
-
-- Email: `admin@example.com`
-- Password: `change-me-now`
-
-## Configure Secrets
-
-Copy `.env.example` to `.env`, then fill in the values you have.
-
-```bash
-cp .env.example .env
-```
-
-For Windows PowerShell:
-
-```powershell
-Copy-Item .env.example .env
-```
-
-The backend reads `.env` itself. Do not put API keys in `app.js`.
-
 ## What It Does
 
 - Password-protected dashboard with HTTP-only session cookies.
